@@ -9,4 +9,5 @@
 (load "prime.lisp")
 
 (defun euler007 ()
+  (prime-init 200000)
   (prime 10001))

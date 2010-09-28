@@ -9,6 +9,7 @@
 (load "prime.lisp")
 
 (defun euler010 ()
+  (prime-init 2000100)
   (do ((iteration 1 (1+ iteration))
        (current-prime 0 (prime iteration))
        (sum 0 (+ sum current-prime)))

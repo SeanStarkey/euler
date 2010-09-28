@@ -2,55 +2,73 @@
 ;;;; Perform prime sieve of Eratosthenes
 ;;;;
 
-(defparameter *prime-limit* 2500000)
-(defparameter *prime-sieve* (make-array *prime-limit* :initial-element 'prime))
-(defparameter *sieve-done* nil)
-(setf (svref *prime-sieve* 0) 'not-prime)
-(setf (svref *prime-sieve* 1) 'not-prime)
+(defparameter *prime-sieve* nil)
+(defparameter *prime-array* (make-array 1 :initial-element nil))
+
+;;;
+;;; initialize the prime engine
+;;;
+(defun prime-init (prime-limit)
+  (prime-init-init prime-limit)
+  (prime-init-sieve prime-limit)
+  (prime-init-load-array prime-limit)
+  T)
+
+;;;
+;;; Setup variables for prime engine
+;;;
+(defun prime-init-init (prime-limit)
+  (setf *prime-sieve* (make-array prime-limit :initial-element 'prime))
+  (setf *sieve-done* T)
+  (setf (svref *prime-sieve* 0) 'not-prime)
+  (setf (svref *prime-sieve* 1) 'not-prime)
+  (perform-sieve-on-number 2 prime-limit)
+)
 
 ;;;
 ;;; Return the nth prime number
 ;;;
 (defun prime (nth)
-  (if (not *sieve-done*)
-      (perform-sieve))
-  (do ((iteration 0 iteration)
-       (number-checked 2 (1+ number-checked)))
-      ((>= iteration nth) (1- number-checked))
-    (if (eql (svref *prime-sieve* number-checked) 'prime)
-        (setf iteration (1+ iteration)))))
+  (svref *prime-array* nth))
 
 ;;;
 ;;; Predicate to determine if a number is prime
 ;;;
 (defun primep (number)
-  (if (not *sieve-done*)
-      (perform-sieve))
   (eql (svref *prime-sieve* number) 'prime))
 
 ;;;
-;;; Performs the sieve
-;;; This should be run only once
+;;; Do initial sieve
 ;;;
-(defun perform-sieve ()
-  (setf *sieve-done* T)
-  (setf (svref *prime-sieve* 0) 'not-prime)
-  (setf (svref *prime-sieve* 1) 'not-prime)
-  (perform-sieve-on-number 2)
+(defun prime-init-sieve (prime-limit)
   (let ((current-prime 2)
         (number-checked 2))
     (do ((number-checked 2 (1+ number-checked)))
-        ((>= (* number-checked number-checked) *prime-limit*))
+        ((>= (* number-checked number-checked) prime-limit))
       (if (eql (svref *prime-sieve* number-checked) 'prime)
           (progn
             (setf current-prime number-checked)
-            (if (< (* current-prime current-prime) *prime-limit*)
-                (perform-sieve-on-number current-prime)))))))
+            (if (< (* current-prime current-prime) prime-limit)
+                (perform-sieve-on-number current-prime prime-limit)))))))
+
+;;;
+;;; Load the array with the primes
+;;;
+(defun prime-init-load-array (prime-limit)
+  (setf *prime-array* (adjust-array *prime-array* 10000000))
+  (do ((number-checked 2 (1+ number-checked))
+       (index 0 index))
+      ((>= number-checked prime-limit)
+       (setf *prime-array* (adjust-array *prime-array* (1+ index))))
+    (if (eql (svref *prime-sieve* number-checked) 'prime)
+        (progn
+          (setf index (1+ index))
+          (setf (svref *prime-array* index) number-checked)))))
 
 ;;;
 ;;; Crosses out one particular prime from the sieve
 ;;;
-(defun perform-sieve-on-number (p)
+(defun perform-sieve-on-number (p prime-limit)
   (do ((i (+ p p) (+ i p)))
-       ((>= i *prime-limit*))
+       ((>= i prime-limit))
     (setf (svref *prime-sieve* i) 'not-prime)))
