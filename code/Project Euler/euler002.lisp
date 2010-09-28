@@ -14,7 +14,7 @@
 ;;
 ;; Store the fibonacci values in a vector as we compute them.
 ;;
-(defvar *fibonacci-values* (make-array 100 :initial-element nil))
+(defparameter *fibonacci-values* (make-array 100 :initial-element nil))
 (setf (svref *fibonacci-values* 1) 1)
 (setf (svref *fibonacci-values* 2) 2)
 
