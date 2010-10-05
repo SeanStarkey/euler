@@ -4,6 +4,7 @@
 
 (defparameter *prime-sieve* nil)
 (defparameter *prime-array* (make-array 1 :initial-element nil))
+(defparameter *prime-largest* 0)
 
 ;;;
 ;;; initialize the prime engine
@@ -35,7 +36,20 @@
 ;;; Predicate to determine if a number is prime
 ;;;
 (defun primep (number)
-  (eql (svref *prime-sieve* number) 'prime))
+  (if (< number *prime-largest*)
+      (eql (svref *prime-sieve* number) 'prime)
+      (if (< *prime-largest* (isqrt number))
+          (progn
+            (print "Number too big")
+            nil)
+          (let ((end-value (isqrt number))
+                (prime-iterator 1))
+            (loop
+                 (if (> (prime prime-iterator) end-value)
+                     (return t)
+                     (if (zerop (mod number (prime prime-iterator)))
+                         (return nil)
+                         (setf prime-iterator (1+ prime-iterator)))))))))
 
 ;;;
 ;;; Do initial sieve
@@ -63,7 +77,8 @@
     (if (eql (svref *prime-sieve* number-checked) 'prime)
         (progn
           (setf index (1+ index))
-          (setf (svref *prime-array* index) number-checked)))))
+          (setf (svref *prime-array* index) number-checked)
+          (setf *prime-largest* number-checked)))))
 
 ;;;
 ;;; Crosses out one particular prime from the sieve

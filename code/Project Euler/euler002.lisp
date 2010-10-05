@@ -11,31 +11,14 @@
 ;;;; not exceed four million.
 ;;;;
 
-;;
-;; Store the fibonacci values in a vector as we compute them.
-;;
-(defparameter *fibonacci-values* (make-array 100 :initial-element nil))
-(setf (svref *fibonacci-values* 1) 1)
-(setf (svref *fibonacci-values* 2) 2)
+(load "fibonacci.lisp")
 
 (defun euler002 ()
+  (fibonacci-init 100)
   (let ((lastfib 0)
         (sum 0))
-    (do ((i 1 (1+ i)))
+    (do ((i 2 (1+ i)))
         ((> lastfib 4000000) sum)
       (setf lastfib (fibonacci i))
       (if (evenp lastfib)
           (setf sum (+ sum lastfib))))))
-
-;;;
-;;; Performs a "quick" fibonacci computation
-;;;
-(defun fibonacci (n)
-  (if (not (null (svref *fibonacci-values* n)))
-      (svref *fibonacci-values* n)
-      (let ((new-fib
-             (+ (fibonacci (- n 1)) (fibonacci (- n 2)))))
-        (setf (svref *fibonacci-values* n) new-fib)
-        new-fib)))
-
-

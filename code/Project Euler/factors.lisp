@@ -8,7 +8,7 @@
 ;;; Return the prime factors as a list
 ;;;
 (defun factors (number)
-  (prime-init (1+ number))
+  (prime-init (+ 100 (isqrt number)))
   (factors-recursive number 1))
 
 ;;;
