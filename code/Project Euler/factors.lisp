@@ -8,8 +8,24 @@
 ;;; Return the prime factors as a list
 ;;;
 (defun factors (number)
-  (prime-init (+ 100 (isqrt number)))
-  (factors-recursive number 1))
+  (let ((factor-list (factors-recursive number 1))
+        (combined-factor-list nil))
+    (dolist (single-factor factor-list)
+      (if (null combined-factor-list)
+          (setf combined-factor-list (list (list single-factor 1)))
+          (if (= (caar (last combined-factor-list)) single-factor)
+              (setf (cadar (last combined-factor-list))
+                    (1+ (cadar (last combined-factor-list))))
+              (setf combined-factor-list
+                    (append combined-factor-list
+                            (list (list single-factor 1)))))))
+    combined-factor-list))
+
+;;;
+;;; Initialize the factors engine
+;;;
+(defun factors-init (number)
+  (prime-init (+ 100 (isqrt number))))
 
 ;;;
 ;;; Recursively determine the next factor

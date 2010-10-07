@@ -7,4 +7,5 @@
 (load "factors.lisp")
 
 (defun euler003 ()
-  (car (last (factors 600851475143))))
+  (factors-init 600851475143)
+  (caar (last (factors 600851475143))))
