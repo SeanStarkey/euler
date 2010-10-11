@@ -8,6 +8,8 @@
 ;;; Return the prime factors as a list
 ;;;
 (defun factors (number)
+  (if (or (= number 1) (= number 0))
+      (return-from factors nil))
   (let ((factor-list (factors-recursive number 1))
         (combined-factor-list nil))
     (dolist (single-factor factor-list)
