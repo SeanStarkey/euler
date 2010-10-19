@@ -5,6 +5,25 @@
 (load "prime.lisp")
 
 ;;;
+;;; Return the divisors as a list
+;;;
+(defun divisors (number)
+  (butlast (sort (divisors-helper (factors number) 1) #'<)))
+
+(defun divisors-helper (lst product)
+  (let ((return-list nil))
+    (if (null lst)
+        (setf return-list (append return-list (list product)))
+        (dotimes (number-multiplied (1+ (cadar lst)))
+          (setf return-list
+                (append return-list
+                        (divisors-helper (cdr lst)
+                                         (* product
+                                            (expt (caar lst)
+                                                  number-multiplied)))))))
+    return-list))
+
+;;;
 ;;; Return the prime factors as a list
 ;;;
 (defun factors (number)
