@@ -3,12 +3,18 @@
 ;;;;
 
 (load "prime.lisp")
+(load "memoize.lisp")
 
 ;;;
 ;;; Return the divisors as a list
 ;;;
 (defun divisors (number)
-  (butlast (sort (divisors-helper (factors number) 1) #'<)))
+  (butlast (sort (funcall divisors-helper-memoized (factors number) 1) #'<)))
+
+(defun divisors-non-sorted (number)
+  (butlast (funcall divisors-helper-memoized (factors number) 1)))
+
+(defvar divisors-helper-memoized (memoize #'divisors-helper))
 
 (defun divisors-helper (lst product)
   (let ((return-list nil))
@@ -17,10 +23,10 @@
         (dotimes (number-multiplied (1+ (cadar lst)))
           (setf return-list
                 (append return-list
-                        (divisors-helper (cdr lst)
-                                         (* product
-                                            (expt (caar lst)
-                                                  number-multiplied)))))))
+                        (funcall divisors-helper-memoized (cdr lst)
+                                 (* product
+                                    (expt (caar lst)
+                                          number-multiplied)))))))
     return-list))
 
 ;;;
@@ -29,7 +35,7 @@
 (defun factors (number)
   (if (or (= number 1) (= number 0))
       (return-from factors nil))
-  (let ((factor-list (factors-recursive number 1))
+  (let ((factor-list (funcall factors-recursive-memoized number 1))
         (combined-factor-list nil))
     (dolist (single-factor factor-list)
       (if (null combined-factor-list)
@@ -48,6 +54,8 @@
 (defun factors-init (number)
   (prime-init (+ 100 (isqrt number))))
 
+(defvar factors-recursive-memoized (memoize #'factors-recursive))
+
 ;;;
 ;;; Recursively determine the next factor
 ;;;
@@ -58,7 +66,8 @@
          (let ((prime-to-check (prime prime-iteration)))
            (if (eql (mod number prime-to-check) 0)
                (return (cons prime-to-check
-                             (factors-recursive (/ number prime-to-check)
-                                                prime-iteration)))
+                             (funcall factors-recursive-memoized
+                                      (/ number prime-to-check)
+                                      prime-iteration)))
                (setq prime-iteration (1+ prime-iteration)))))))
 
