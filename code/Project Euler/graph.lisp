@@ -7,7 +7,7 @@
 (defparameter graph-test-data '((a
                                  ((b 2) (c 3)))
                                 (b
-                                 ((d 3) (e 1)))
+                                 ((d 3) (e 6)))
                                 (c
                                  ((d 3)))
                                 (d
@@ -17,7 +17,7 @@
                                 (f
                                  ((g 3)))
                                 (g ((nil)))))
-(defun test () (shortest-path 'a 'g graph-test-data))
+(defun test () (cost (shortest-path 'a 'g graph-test-data) graph-test-data))
 
 (defun nodes (graph)
   "returns a list of all the nodes"
@@ -32,6 +32,22 @@
 
 (defun vertices (node graph)
   (cadr (node node graph)))
+
+(defun cost (path graph)
+  "Returns the cost of a path"
+  (print path)
+  (let ((sum 0)
+        (previous nil))
+    (dolist (node path)
+      (if (null previous)
+          (setf previous node)
+            (setf sum (+ sum (vertex-cost previous node graph))
+                  previous node)))
+    sum))
+
+(defun vertex-cost (start end graph)
+  "Returns the cost of one vertex"
+  (cadr (find end (cadr (node start graph)) :key #'car)))
 
 ;;
 ;; See wikipedia article for pseudocode
