@@ -55,9 +55,9 @@
 ;;
 (defun shortest-path (start end graph)
   "Returns the shortest path in a graph using Dijkstra's algorithm"
-  (let ((dist (make-hash-table))
-        (previous (make-hash-table))
-        (q (make-hash-table)))
+  (let ((dist (make-hash-table :test #'equal))
+        (previous (make-hash-table :test #'equal))
+        (q (make-hash-table :test #'equal)))
     ;; Initialize variables
     (dolist (node (nodes graph))
       (setf (gethash node dist) most-positive-fixnum)
@@ -98,3 +98,24 @@
                      (setf shortest-dist (gethash k dist)
                            u k))) q)
     u))
+
+
+(defun load-triangle-file (filename)
+  (with-open-file (stream (probe-file filename))
+                  (do ((line (read-line stream) (read-line stream nil 'eof)))
+                      ((eq line 'eof) "end")
+                    (print (split-string line #\Space)))))
+
+;;;
+;;; Used by load-triangle-file
+;;;
+(defun split-string (string delimeter)
+  (let ((number-list nil))
+    (do* ((pos 0 pos)
+          (next-pos (position delimeter string)
+                    (position delimeter string :start pos)))
+        ((eq next-pos nil) (push (parse-integer (subseq string pos))
+                                 number-list))
+      (push (parse-integer (subseq string pos next-pos)) number-list)
+      (setf pos (1+ next-pos)))
+    (reverse number-list)))
