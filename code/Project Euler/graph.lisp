@@ -17,7 +17,8 @@
                                 (f
                                  ((g 3)))
                                 (g ((nil)))))
-(defun test () (cost (shortest-path 'a 'g graph-test-data) graph-test-data))
+;(defun test () (cost (shortest-path 'a 'g graph-test-data) graph-test-data))
+(defun test () (load-triangle-file "data018.txt"))
 
 (defun nodes (graph)
   "returns a list of all the nodes"
@@ -101,10 +102,41 @@
 
 
 (defun load-triangle-file (filename)
-  (with-open-file (stream (probe-file filename))
-                  (do ((line (read-line stream) (read-line stream nil 'eof)))
-                      ((eq line 'eof) "end")
-                    (print (split-string line #\Space)))))
+  (let ((graph nil)
+        (node-lst nil))
+    (with-open-file (stream (probe-file filename))
+                    (do ((index 1 (1+ index))
+                         (line (read-line stream)
+                               (read-line stream nil 'eof)))
+                        ((eq line 'eof))
+                      (push (index-nodes index (split-string line #\Space))
+                            node-lst)))
+    (setf node-lst (reverse node-lst))
+    (do ((index 0 (1+ index)))
+        ((eq index (length node-lst)))
+      (print "-----")
+      (print index)
+      (print (nth index node-lst))
+      (do ((index2 0 (1+ index2)))
+          ((eq index2 (length (nth index node-lst))))
+        (print (get-node index index2 node-lst))))
+;        (print (find (list (1+ index) index2) (nth index node-lst) :test #'equal :key #'car))))
+    ;(print (length node-lst))
+    graph))
+
+(defun get-node (row col node-lst)
+  (find (list col row) (nth row node-lst)))
+
+;;;
+;;; Return a list of the nodes indexed by location
+;;;
+(defun index-nodes (index lst)
+  (let ((return-lst nil)
+        (index2 0))
+    (dolist (cost lst)
+      (push (list (list index index2) cost) return-lst)
+      (setf index2 (1+ index2)))
+    (reverse return-lst)))
 
 ;;;
 ;;; Used by load-triangle-file
