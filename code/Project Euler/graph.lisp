@@ -18,8 +18,9 @@
                                  ((g 3)))
                                 (g ((nil)))))
 ;(defun test () (cost (shortest-path 'a 'g graph-test-data) graph-test-data))
-(defun test () (length (load-triangle-file "small.txt")))
-;(defun test () (shortest-path '(0 0) 'end (load-triangle-file "small.txt")))
+;(defun test () (load-triangle-file "small.txt"))
+(defun test () (shortest-path '(0 0) 'end (load-triangle-file "small.txt")))
+;(defun test () (longest-path 'a 'g graph-test-data))
 
 (defun nodes (graph)
   "returns a list of all the nodes"
@@ -30,14 +31,14 @@
 
 (defun node (node graph)
   "Returns a node given a graph"
-  (find node graph :key #'car))
+  (find node graph :key #'car :test #'equal))
 
 (defun vertices (node graph)
   (cadr (node node graph)))
 
 (defun cost (path graph)
   "Returns the cost of a path"
-  (print path)
+  ;(print path)
   (let ((sum 0)
         (previous nil))
     (dolist (node path)
@@ -47,9 +48,20 @@
                   previous node)))
     sum))
 
+(defun cost-highest (path graph)
+  (print path)
+  (let ((sum 0)
+        (previous nil))
+    (dolist (node path)
+      (if (null previous)
+          (setf previous node)
+            (setf sum (+ sum (- 100 (vertex-cost previous node graph)))
+                  previous node)))
+    (- sum 100)))
+
 (defun vertex-cost (start end graph)
   "Returns the cost of one vertex"
-  (cadr (find end (cadr (node start graph)) :key #'car)))
+  (cadr (find end (cadr (node start graph)) :key #'car :test #'equal)))
 
 ;;
 ;; See wikipedia article for pseudocode
@@ -69,7 +81,7 @@
     (shortest-path-loop start end graph dist previous q)
     (let ((path)
           (u end))
-      (loop while (not (eql u start)) do
+      (loop while (not (equal u start)) do
             (push u path)
             (setf u (gethash u previous)))
       (push start path)
@@ -101,7 +113,6 @@
                            u k))) q)
     u))
 
-
 (defun load-triangle-file (filename)
   (let ((graph nil)
         (node-lst nil))
@@ -113,20 +124,21 @@
                       (push (index-nodes index (split-string line #\Space))
                             node-lst)))
     (setf node-lst (reverse node-lst))
+    (push (list '(0 0) (list (list '(1 0) (get-node-cost 1 0 node-lst)))) graph)
     (do ((row 1 (1+ row)))
         ((> row (length node-lst)))
-      (format t "~%--- row ~d ---" row)
-      (print (nth (1- row) node-lst))
-      (format t "~%----------")
+      ;(format t "~%--- row ~d ---" row)
+      ;(print (nth (1- row) node-lst))
+      ;(format t "~%----------")
       (do ((col 0 (1+ col)))
-          ((eq col (length (nth (1- row) node-lst))))
+          ((eq (1+ col) (length (nth (1- row) node-lst))))
         (let ((connect nil))
         ;(print (get-node row col node-lst))
-        (format t "~%C: (~d ~d) to " (1- row) col)
-        (format t "(~d ~d)[~d]" row col (get-node-cost row col node-lst))
-        (if (/= row (1+ col))
-            (format t " and (~d ~d)[~d]" row (1+ col)
-                    (get-node-cost row (1+ col) node-lst)))
+        ;(format t "~%C: (~d ~d) to " (1- row) col)
+        ;(format t "(~d ~d)[~d]" row col (get-node-cost row col node-lst))
+        ;(if (/= row (1+ col))
+        ;    (format t " and (~d ~d)[~d]" row (1+ col)
+        ;            (get-node-cost row (1+ col) node-lst)))
         (if (/= row (1+ col))
             (push (list (list row (1+ col))
                         (get-node-cost row (1+ col) node-lst)) connect))
@@ -134,16 +146,17 @@
                     (get-node-cost row col node-lst)) connect)
         (setf connect (list (list (1- row) col) connect))
         (push connect graph))))
-    (format t "~%--------")
+    ;(format t "~%--------")
     (do ((col 0 (1+ col)))
         ((eql col (length node-lst)))
-      (push (list (list (length node-lst) col) (list (list 'end 0))) graph)
-      (format t "~%C: (~d ~d) to end" (length node-lst) col))
+      (push (list (list (length node-lst) col) (list (list 'end 0))) graph))
+      ;(format t "~%C: (~d ~d) to end" (length node-lst) col))
+    (push '(end (nil)) graph)
     (setf graph (reverse graph))
     graph))
 
 (defun get-node-cost (row col node-lst)
-  (cadr (get-node row col node-lst)))
+  (- 100 (cadr (get-node row col node-lst))))
 
 (defun get-node (row col node-lst)
   ;(format t "~%r=~d c=~d " row col)
