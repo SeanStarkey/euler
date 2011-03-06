@@ -36,20 +36,22 @@
 ;;; Predicate to determine if a number is prime
 ;;;
 (defun primep (number)
-  (if (< number *prime-largest*)
-      (eql (svref *prime-sieve* number) 'prime)
-      (if (< *prime-largest* (isqrt number))
-          (progn
-            (format t "Number too big: ~d~%" number)
-            nil)
-          (let ((end-value (isqrt number))
-                (prime-iterator 1))
-            (loop
-                 (if (> (prime prime-iterator) end-value)
-                     (return t)
-                     (if (zerop (mod number (prime prime-iterator)))
-                         (return nil)
-                         (setf prime-iterator (1+ prime-iterator)))))))))
+  (if (< number 1)
+      nil
+      (if (< number *prime-largest*)
+          (eql (svref *prime-sieve* number) 'prime)
+          (if (< *prime-largest* (isqrt number))
+              (progn
+                (format t "Number too big: ~d~%" number)
+                nil)
+              (let ((end-value (isqrt number))
+                    (prime-iterator 1))
+                (loop
+                   (if (> (prime prime-iterator) end-value)
+                       (return t)
+                       (if (zerop (mod number (prime prime-iterator)))
+                           (return nil)
+                           (setf prime-iterator (1+ prime-iterator))))))))))
 
 ;;;
 ;;; Do initial sieve
