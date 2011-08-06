@@ -14,8 +14,6 @@
 (defun divisors-non-sorted (number)
   (butlast (funcall divisors-helper-memoized (factors number) 1)))
 
-(defvar divisors-helper-memoized (memoize #'divisors-helper))
-
 (defun divisors-helper (lst product)
   (let ((return-list nil))
     (if (null lst)
@@ -28,6 +26,8 @@
                                     (expt (caar lst)
                                           number-multiplied)))))))
     return-list))
+
+(defvar divisors-helper-memoized (memoize #'divisors-helper))
 
 ;;;
 ;;; Return the prime factors as a list
@@ -54,8 +54,6 @@
 (defun factors-init (number)
   (prime-init (+ 100 (isqrt number))))
 
-(defvar factors-recursive-memoized (memoize #'factors-recursive))
-
 ;;;
 ;;; Recursively determine the next factor
 ;;;
@@ -70,4 +68,6 @@
                                       (/ number prime-to-check)
                                       prime-iteration)))
                (setq prime-iteration (1+ prime-iteration)))))))
+
+(defvar factors-recursive-memoized (memoize #'factors-recursive))
 
