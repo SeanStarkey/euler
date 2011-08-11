@@ -2,13 +2,13 @@
 ;;;; Setup memoize functionality
 ;;;;
 ;;;; Usage:
-;;;;   Define closure first:
-;;;;     (defvar f-memoized (memoize #'f))
-;;;;
 ;;;;   Define function that uses memoized call:
 ;;;;     (defun f (x)
 ;;;;        stuff
 ;;;;        (funcall f-memoized params))
+;;;;
+;;;;   Define closure:
+;;;;     (defvar f-memoized (memoize #'f))
 ;;;;
 (defun memoize (fn)
   (let ((cache (make-hash-table :test #'equal)))
