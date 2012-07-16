@@ -7,7 +7,7 @@
 (defparameter *end* (expt 10 8))
 
 (defun euler187 ()
-  (prime-init (* 2 *end*))
+  (prime-init (+ *end* 100))
   (let ((count 0))
     (block end
     (do ((x 1 (1+ x)))
