@@ -71,7 +71,7 @@
 ;;; Load the array with the primes
 ;;;
 (defun prime-init-load-array (prime-limit)
-  (setf *prime-array* (adjust-array *prime-array* 10000000))
+  (setf *prime-array* (adjust-array *prime-array* 100000000))
   (do ((number-checked 2 (1+ number-checked))
        (index 0 index))
       ((>= number-checked prime-limit)
