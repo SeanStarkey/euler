@@ -41,9 +41,7 @@
       (if (< number *prime-largest*)
           (eql (svref *prime-sieve* number) 'prime)
           (if (< *prime-largest* (isqrt number))
-              (progn
-                (format t "Number too big: ~d~%" number)
-                nil)
+              (error (format nil "Number too big: ~d~%" number))
               (let ((end-value (isqrt number))
                     (prime-iterator 1))
                 (loop
