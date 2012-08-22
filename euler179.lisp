@@ -5,8 +5,12 @@
 
 (load "factors.lisp")
 
+(defparameter *end* (expt 10 5))
+
 (defun euler179 ()
-  (factors-init (expt 10 7))
+  (factors-init *end*)
   (do ((x 1 (1+ x)))
-      ((= x (expt 10 6)))
-    (divisors-non-sorted x)))
+      ((>= x *end*))
+    ;(print x)
+    (if (not (primep *end*))
+        (divisors-non-sorted x))))
