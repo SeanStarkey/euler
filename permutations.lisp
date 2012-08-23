@@ -27,3 +27,14 @@
   (if (null lst)
       0
       (+ (car lst) (* 10 (list-to-number-helper (cdr lst))))))
+
+(defun ! (n)
+  (if (= n 0)
+      1
+      (* n (! (- n 1)))))
+
+(defun c (n r)
+  (/ (! n) (* (! r) (! (- n r)))))
+
+(defun p (n r)
+  (/ (! n) (! (- n r))))
