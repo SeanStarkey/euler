@@ -6,5 +6,5 @@
 
 (defun euler067 ()
   (setf graph (load-triangle-file "triangle.txt"))
-  (setf path (shortest-path '(0 0) 'end graph))
+  (setf path (shortest-path 'start 'end graph))
   (cost-highest path graph))
