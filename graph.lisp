@@ -4,6 +4,8 @@
 ;;;; Use adjacency list for graph
 ;;;;
 
+(load "split-string")
+
 (defparameter graph-test-data '((a
                                  ((b 2) (c 3)))
                                 (b
@@ -126,7 +128,7 @@
            (line (read-line stream)
                  (read-line stream nil 'eof)))
           ((eq line 'eof))
-        (push (index-nodes index (split-string line (get-delim type)))
+        (push (index-nodes index (split-string-numbers line (get-delim type)))
               row-lst)))
     (setf row-lst (reverse row-lst))
     (setf graph (case type
@@ -200,17 +202,3 @@
       (push (list (list index index2) cost) return-lst)
       (setf index2 (1+ index2)))
     (reverse return-lst)))
-
-;;;
-;;; Used by load-triangle-file
-;;;
-(defun split-string (string delimeter)
-  (let ((number-list nil))
-    (do* ((pos 0 pos)
-          (next-pos (position delimeter string)
-                    (position delimeter string :start pos)))
-        ((eq next-pos nil) (push (parse-integer (subseq string pos))
-                                 number-list))
-      (push (parse-integer (subseq string pos next-pos)) number-list)
-      (setf pos (1+ next-pos)))
-    (reverse number-list)))
