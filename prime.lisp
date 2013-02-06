@@ -19,10 +19,9 @@
 ;;; Setup variables for prime engine
 ;;;
 (defun prime-init-init (prime-limit)
-  (setf *prime-sieve* (make-array prime-limit :initial-element 'prime))
-  (setf *sieve-done* T)
-  (setf (svref *prime-sieve* 0) 'not-prime)
-  (setf (svref *prime-sieve* 1) 'not-prime)
+  (setf *prime-sieve* (make-array prime-limit :initial-element t))
+  (setf (svref *prime-sieve* 0) nil)
+  (setf (svref *prime-sieve* 1) nil)
   (perform-sieve-on-number 2 prime-limit)
 )
 
@@ -39,7 +38,7 @@
   (if (< number 1)
       nil
       (if (< number *prime-largest*)
-          (eql (svref *prime-sieve* number) 'prime)
+          (svref *prime-sieve* number)
           (if (< *prime-largest* (isqrt number))
               (error (format nil "Number too big: ~d~%" number))
               (let ((end-value (isqrt number))
@@ -59,7 +58,7 @@
         (number-checked 2))
     (do ((number-checked 2 (1+ number-checked)))
         ((>= (* number-checked number-checked) prime-limit))
-      (if (eql (svref *prime-sieve* number-checked) 'prime)
+      (if (svref *prime-sieve* number-checked)
           (progn
             (setf current-prime number-checked)
             (if (< (* current-prime current-prime) prime-limit)
@@ -74,7 +73,7 @@
        (index 0 index))
       ((>= number-checked prime-limit)
        (setf *prime-array* (adjust-array *prime-array* (1+ index))))
-    (if (eql (svref *prime-sieve* number-checked) 'prime)
+    (if (svref *prime-sieve* number-checked)
         (progn
           (setf index (1+ index))
           (setf (svref *prime-array* index) number-checked)
@@ -86,4 +85,4 @@
 (defun perform-sieve-on-number (p prime-limit)
   (do ((i (+ p p) (+ i p)))
        ((>= i prime-limit))
-    (setf (svref *prime-sieve* i) 'not-prime)))
+    (setf (svref *prime-sieve* i) nil)))
