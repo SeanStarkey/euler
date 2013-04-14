@@ -2,6 +2,8 @@
 ;;;; Project Euler - Problem 45
 ;;;;
 
+(load "figurate")
+
 (defun euler045 ()
   (let* ((triangle-count 286)
          (triangle-eval (triangle triangle-count))
@@ -25,13 +27,3 @@
                (progn
                  (incf hexagonal-count)
                  (setf hexagonal-eval (hexagonal hexagonal-count))))))))
-
-
-(defun triangle (n)
-  (/ (* n (+ n 1)) 2))
-
-(defun pentagonal (n)
-  (/ (* n (- (* 3 n) 1)) 2))
-
-(defun hexagonal (n)
-  (* n (- (* 2 n) 1)))

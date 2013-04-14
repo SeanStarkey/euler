@@ -2,6 +2,8 @@
 ;;;; Project Euler 92
 ;;;;
 
+(load "figurate")
+
 (defvar a (make-array 698))
 
 (defun euler092 ()
@@ -33,6 +35,3 @@
                (progn
                  (setf sum (+ sum (square (cadr division))))
                  (setf number (car division))))))))
-
-(defun square (number)
-  (* number number))

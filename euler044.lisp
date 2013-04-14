@@ -2,6 +2,8 @@
 ;;;; Project euler problem 44
 ;;;;
 
+(load "figurate")
+
 (defparameter *size* 10000)
 (defparameter *pentagonal-hash* (make-hash-table))
 
@@ -29,9 +31,6 @@
       (let ((pent (pentagonal index)))
         (setf (gethash pent *pentagonal-hash*) t)
         (setf (aref return-array index) pent)))))
-
-(defun pentagonal (n)
-  (/ (* n (- (* 3 n) 1)) 2))
 
 (defun pentagonalp (n)
   (nth-value 0 (gethash n *pentagonal-hash*)))
