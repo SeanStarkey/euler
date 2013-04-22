@@ -3,6 +3,7 @@
 ;;;;
 
 (load "factors")
+(load "totient");
 
 (defun euler069 ()
   (factors-init 1000000)
@@ -16,11 +17,3 @@
               (setf max ratio)
               (setf n i)))))
     n))
-
-;;
-;; Formula found on wikipedia
-;;
-(defun phi (n)
-  (labels ((f (m)
-          (- 1 (/ 1 m))))
-    (* n (reduce #'* (mapcar #'f (mapcar #'car (factors n)))))))
