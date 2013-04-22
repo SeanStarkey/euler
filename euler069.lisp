@@ -2,7 +2,6 @@
 ;;;; Problem 69
 ;;;;
 
-(load "factors")
 (load "totient");
 
 (defun euler069 ()

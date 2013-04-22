@@ -1,3 +1,5 @@
+(load "factors")
+
 ;;
 ;; Formula found on wikipedia
 ;;
