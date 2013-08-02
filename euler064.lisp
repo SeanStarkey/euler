@@ -7,6 +7,8 @@
 ;;; https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Continued_fraction_expansion
 ;;;
 
+(load "sqrt-fraction")
+
 (defun euler064 ()
   (let ((total 0))
     (loop for n from 1 to 10000 do
@@ -15,24 +17,14 @@
     total))
 
 (defun determine-repeat (S)
-  (let* (;(sequence (make-array 0 :fill-pointer 0 :adjustable t))
-         (tuples (make-array 0 :fill-pointer 0 :adjustable t))
-         (m 0)
-         (d 1)
-         (a (floor (sqrt S)))
-         (a0 a))
+  (let ((current-tuple (sqrt-fraction-start S))
+        (tuples (make-array 0 :fill-pointer 0 :adjustable t)))
+    (vector-push-extend (list (nth 0 current-tuple) (nth 1 current-tuple)) tuples)
     (loop do
-         (let* ((tuple (list m d))
-                (pos (position tuple tuples :test 'equal)))
+         (setf current-tuple (sqrt-fraction-iter current-tuple))
+         (let ((pos (position (list (nth 0 current-tuple) (nth 1 current-tuple)) tuples :test 'equal)))
            (if (not (null pos))
                (return-from determine-repeat (- (length tuples) pos)))
-           ;(vector-push-extend a sequence)
-           (vector-push-extend tuple tuples)
-           ;(format t "m=~A d=~A a=~A~%" m d a)
-           (if (= a 0)
-               (return-from determine-repeat 0))
-           (setf m (- (* d a) m))
-           (setf d (/ (- S (* m m)) d))
-           (if (/= d 0)
-               (setf a (floor (/ (+ a0 m) d)))
-               (setf a 0))))))
+           (if (= 0 (nth 2 current-tuple))
+               (return-from determine-repeat 0)))
+         (vector-push-extend (list (nth 0 current-tuple) (nth 1 current-tuple)) tuples))))
