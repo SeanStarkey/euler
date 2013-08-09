@@ -31,6 +31,12 @@
 (defun prime (nth)
   (svref *prime-array* nth))
 
+(defun prime-nth (p)
+  (loop for i from 1 to (length *prime-array*) do
+       (if (= (prime i) p)
+           (return-from prime-nth i)))
+  nil)
+
 ;;;
 ;;; Predicate to determine if a number is prime
 ;;;
